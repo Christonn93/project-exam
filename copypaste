@@ -1,0 +1,485 @@
+async function fetchAllData() {
+ try {
+  // Query params
+  const queryString = document.location.search;
+  const params = new URLSearchParams(queryString);
+  const id = params.get("post_id");
+
+  const post = await fetchPostDetails(id);
+  const media = await fetchMedia(id);
+  const comments = await fetchComments(id);
+  const featured_mediaId = post.featured_media;
+
+  console.log("Post", post);
+  console.log("Media", media);
+  console.log("Comments:", comments);
+
+  const imgGallery = document.createElement("div");
+  imgGallery.id = "image-gallery";
+  imgGallery.classList.add("img-gallery");
+
+  media.forEach((e) => {
+   const postMedia = document.createElement("div");
+   postMedia.classList.add("image-container");
+   const mediaTag = document.createElement("div");
+   mediaTag.classList.add("image-tag");
+   const cap = e.caption.rendered;
+   const para = document.createElement("p");
+   para.innerHTML = cap;
+   mediaTag.append(para);
+
+   if (e.id === featured_mediaId) {
+    const imgHref = e.source_url;
+    const image = document.createElement("img");
+    image.src = `${imgHref}`;
+    image.alt = `${e.alt_text}`;
+    image.id = `post-image`;
+    image.style = "display: none;";
+   } else if (e.post === id) {
+    const imgHref = e.source_url;
+    const image = document.createElement("img");
+    image.src = `${imgHref}`;
+    image.alt = `${e.alt_text}`;
+    image.id = `post-image`;
+    image.classList.add("post-image");
+    postMedia.append(image, mediaTag);
+    imgGallery.append(postMedia);
+   }
+  });
+
+  const main = document.getElementById("displayContent");
+  const header = document.createElement("h1");
+  header.innerText = `${post.title.rendered}`;
+
+  const content = document.createElement("div");
+  content.classList.add("content-rendered");
+  content.innerHTML = `<p>${post.content.rendered}</p>`;
+
+  main.append(header, content, imgGallery);
+
+  return;
+ } catch (err) {
+  console.error(err);
+ }
+}
+
+fetchAllData();
+
+
+
+
+
+import { fetchPostDetails, fetchMedia, fetchComments } from "/config/js/api/conn.js";
+
+async function fetchAllData() {
+ try {
+  // Query params
+  const queryString = document.location.search;
+  const params = new URLSearchParams(queryString);
+  const id = params.get("post_id");
+
+  const post = await fetchPostDetails(id);
+  const media = await fetchMedia(id);
+  const comments = await fetchComments(id);
+  const featured_mediaId = post.featured_media;
+
+  console.log("Post", post);
+  console.log("Media", media);
+  console.log("Comments:", comments);
+
+   // Html elements
+ const imgGallery = document.createElement("div");
+ const postMedia = document.createElement("div");
+ const image = document.createElement("img");
+ const main = document.getElementById("displayContent");
+ const content = document.createElement("div");
+ const mediaTag = document.createElement("div");
+ const para = document.createElement("p");
+ const header = document.createElement("h1");
+ const imgHref = media.source_url;
+
+ // Adding classes to HTML elements
+ imgGallery.classList.add("img-gallery");
+ postMedia.classList.add("image-container");
+ mediaTag.classList.add("image-tag");
+ image.classList.add("post-image");
+ content.classList.add("content-rendered");
+
+ // Adding id to HTML elements
+ imgGallery.id = "image-gallery";
+
+ // Images
+ image.id = `post-img_ ${id}`;
+ image.src = `${imgHref}`;
+ image.alt = `${media.alt_text}`;
+ // If post missing image
+ const missingImageSrc = `https://via.placeholder.com/500x500?text=Image+not+found`;
+
+ // Data from API Fetch & adding content to elements
+ content.innerHTML = `<p>${post.content.rendered}</p>`;
+ para.innerHTML = `${media.caption.rendered}`;
+ header.innerText = `${post.title.rendered}`;
+ if (media.id === featured_mediaId) {
+  image.style = "display: none;";
+ } else if (media.post === id) {
+  postMedia.append(image, mediaTag);
+  imgGallery.append(postMedia);
+ }
+
+ main.append(header, content, imgGallery);;
+
+  return;
+ } catch (err) {
+  console.error(err);
+ }
+}
+
+fetchAllData();
+
+function createPostDetails() {}
+createPostDetails();
+
+function createPostComments() {}
+createPostComments();
+
+function addPostComment() {}
+addPostComment();
+
+function htmlSelectors() {
+ // Html elements
+ const imgGallery = document.createElement("div");
+ const postMedia = document.createElement("div");
+ const image = document.createElement("img");
+ const main = document.getElementById("displayContent");
+ const content = document.createElement("div");
+ const mediaTag = document.createElement("div");
+ const para = document.createElement("p");
+ const header = document.createElement("h1");
+
+ // Adding classes to HTML elements
+ imgGallery.classList.add("img-gallery");
+ postMedia.classList.add("image-container");
+ mediaTag.classList.add("image-tag");
+ image.classList.add("post-image");
+ content.classList.add("content-rendered");
+
+ // Adding id to HTML elements
+ imgGallery.id = "image-gallery";
+ image.id = `post-img_ ${id}`;
+
+ // If post missing image
+ const missingImageSrc = `https://via.placeholder.com/500x500?text=Image+not+found`;
+
+ // Data from API Fetch & adding content to elements
+ content.innerHTML = `<p>${post.content.rendered}</p>`;
+ para.innerHTML = `${post.caption.rendered}`;
+ header.innerText = `${post.title.rendered}`;
+ if (e.id === featured_mediaId) {
+  const imgHref = e.source_url;
+  image.src = `${imgHref}`;
+  image.alt = `${e.alt_text}`;
+  image.id = `post-image`;
+  image.style = "display: none;";
+ } else if (e.post === id) {
+  const imgHref = e.source_url;
+  image.src = `${imgHref}`;
+  image.alt = `${e.alt_text}`;
+  postMedia.append(image, mediaTag);
+  imgGallery.append(postMedia);
+ }
+
+ main.append(header, content, imgGallery);
+}
+
+
+
+// Collecting all fetch results
+export async function collectResults() {
+
+    // All fetch arguments
+    const post = await fetchPosts();
+    let id = post.id;
+    const pages = await fetchPages();
+    const media = await fetchMedia(id);
+    const comments = await fetchComments(id);
+    const tags = await fetchTags(id)
+    const details = await fetchPostDetails(id)
+    const categories = await fetchCategories(id)
+    const navigation = await fetchNavigation()
+
+
+ // Retrieving post data
+ const postData = post.map((e) => {
+  const data = {
+   slug: e.slug,
+   id: e.id,
+   title: e.title.rendered,
+   date: e.date,
+   excerpt: e.excerpt.rendered,
+   feat_img: e.featured_image_url,
+  };
+  return data;
+ });
+
+ // Retrieving media data
+ const images = media.map((e) => {
+  const data = {
+   mediaID: e.id,
+   postId: e.post,
+   imgSrc: e.source_url,
+  };
+
+  return data;
+ });
+
+ // Retrieving comments data
+ const commentsData = comments.map((e) => {
+  const data = {
+   commentsID: e.id,
+   postID: e.post,
+   date: e.date,
+   author: e.author_name,
+   comment: e.content.rendered,
+  };
+
+  return data;
+ });
+
+ // Retrieving categories data
+ const category = categories.map((e) => {
+    const data = {
+        id: e.id,
+        name: e.name,
+        slug: e.slug
+    };
+  
+    return data;
+   });
+
+ // Retrieving categories data
+ const tag = tags.map((e) => {
+    const data = {
+        id: e.id,
+        name: e.name,
+        slug: e.slug
+    };
+  
+    return data;
+   });
+
+    // Retrieving categories data
+ const page = pages.map((e) => {
+    const data = {
+        id: e.id,
+        title: e.title.rendered,
+        slug: e.slug
+    };
+  
+    return data;
+   });
+
+
+const fetchArray = [
+    {
+        postData, 
+        details, 
+        page, 
+        images, 
+        commentsData, 
+        tag, 
+        category, 
+        navigation
+    }]
+
+}
+collectResults();
+
+
+<form action="" method="post">
+<div class="form-container">
+ <fieldset class="form-fieldset">
+  <legend class="form-legend">
+   <strong>
+    <span class="form-icon" aria-hidden="true"> <i class="fa-solid fa-exclamation"></i></span>
+    First name:
+   </strong>
+  </legend>
+  <input type="text" class="form-input" />
+  <span class="form-message" aria-hidden="true">
+   <p>This field is required</p>
+  </span>
+ </fieldset>
+ <fieldset class="form-fieldset">
+  <legend class="form-legend">
+   <strong>
+    <span class="form-icon" aria-hidden="true"> <i class="fa-solid fa-exclamation"></i></span>
+    Last name:
+   </strong>
+  </legend>
+  <input type="text" class="form-input" />
+  <span class="form-message" aria-hidden="true">
+   <p>This field is required</p>
+  </span>
+ </fieldset>
+</div>
+<div class="form-container">
+ <fieldset class="form-fieldset">
+  <legend class="form-legend">
+   <strong>
+    <span class="form-icon" aria-hidden="true"> <i class="fa-solid fa-exclamation"></i></span>
+    Email:
+   </strong>
+  </legend>
+  <input type="text" class="form-input" />
+  <span class="form-message" aria-hidden="true">
+   <p>This field is required</p>
+  </span>
+ </fieldset>
+ <fieldset class="form-fieldset">
+  <legend class="form-legend">
+   <strong>
+    <span class="form-icon" aria-hidden="true"> <i class="fa-solid fa-exclamation"></i></span>
+    Phone number:
+   </strong>
+  </legend>
+  <input type="text" class="form-input" />
+  <span class="form-message" aria-hidden="true">
+   <p>This field is required</p>
+  </span>
+ </fieldset>
+</div>
+<div class="form-container">
+ <fieldset class="form-fieldset">
+  <legend class="form-legend">
+   <strong>
+    <span class="form-icon" aria-hidden="true"> <i class="fa-solid fa-exclamation"></i></span>
+    Your message:
+   </strong>
+  </legend>
+  <textarea name="" id="" cols="30" rows="10" class="form-input"> </textarea>
+  <span class="form-message" aria-hidden="true">
+   <p>This field is required</p>
+  </span>
+ </fieldset>
+</div>
+<div class="form-container">
+ <fieldset class="form-fieldset">
+  <div>
+   <span class="form-icon" aria-hidden="true"> <i class="fa-solid fa-exclamation"></i></span>
+   <input type="checkbox" />
+   <span class="form-message" aria-hidden="true">
+    <p>You need to agree to this before submitting</p>
+   </span>
+   <label class="terms-modal-link">By contacting uss you agree to <a href="#terms_modal">this</a></label>
+  </div>
+  <div>
+   <button type="submit" class="btn btn-form">Send your message</button>
+
+  </div>
+ </fieldset>
+</div>
+</form>
+
+
+/* OLD form setup  */
+import { setTitle } from "./components/functions/setTitle.js";
+setTitle("contact");
+
+function validatingForm() {
+ // Selecting the form
+ const form = document.querySelector("form");
+
+ // Selecting inputs
+ const fName = document.getElementById("f_name");
+ const lName = document.getElementById("l_name");
+ const email = document.getElementById("email");
+ const phoneNum = document.getElementById("phone_num");
+ const message = document.getElementById("message");
+
+ // Function to validate email input in contact form
+ function emailValidation(email) {
+  const regEx = /\S+@\S+\.\S+/;
+  const emailPattern = regEx.test(email);
+  return emailPattern;
+ }
+
+ // Function to validate inputs in contact form
+ function lengthValidation(value, len) {
+  if (value.trim().length > len) {
+   return true;
+  } else {
+   return false;
+  }
+ }
+ // Function to validate the contact form
+ function formValidation(event) {
+  event.preventDefault();
+  try {
+   if (lengthValidation(fName.value, 0)) {
+    setSuccess("f_name");
+   } else {
+    setError("f_name");
+   }
+
+   if (lengthValidation(lName.value, 0)) {
+    setSuccess("l_name");
+   } else {
+    setError("l_name");
+   }
+
+   if (emailValidation(email.value)) {
+    setSuccess("email");
+   } else {
+    setError("email");
+   }
+
+   if (lengthValidation(phoneNum.value, 24)) {
+    setSuccess("phone_num");
+   } else {
+    setError("phone_num");
+   }
+
+   if (lengthValidation(message.value, 9)) {
+    setSuccess("message");
+   } else {
+    setError("message");
+   }
+  } catch (error) {
+   console.log(error);
+  }
+ }
+
+ form.addEventListener("submit", formValidation);
+}
+validatingForm();
+
+// Function set error
+function setError(fieldName) {
+ const formElement = document.getElementById(fieldName);
+ const formFieldset = document.querySelector(".form-fieldset");
+ const formLegend = document.querySelector(".form-legend");
+ const icon = document.querySelector(".form-icon");
+ const feedback = document.querySelector(".form-message");
+
+ formLegend.classList.remove("form-legend");
+ formLegend.classList.add("form-legend-error");
+
+ formFieldset.classList.remove("form-fieldset");
+ formFieldset.classList.add("form-fieldset-error");
+
+ icon.classList.remove("form-icon");
+ icon.classList.add("form-icon-error");
+
+ feedback.classList.remove("form-message");
+ feedback.classList.add("form-message-error");
+}
+
+// Function set error
+function setSuccess(fieldName) {
+ const formElement = document.getElementById(fieldName);
+ formLegend.classList.remove("form-legend-error");
+ formFieldset.classList.remove("form-fieldset-error");
+
+ icon.classList.remove("form-icon-error");
+ feedback.classList.remove("form-message-error");
+}

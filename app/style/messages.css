@@ -1,0 +1,30 @@
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex: 1;
+    align-content: center;
+
+    margin: 10px auto;
+    padding: var(--padding);
+}
+
+.primary {
+    border: var(--prim-bor);
+    background-color: var(--clr-prim);
+}
+
+.warning {
+    border: var(--warn-bor);
+    background-color: var(--clr-warn);
+}
+
+.error {
+    border: var(--err-bor);
+    background-color: var(--clr-err);
+}
+
+.success {
+    border: var(--ok-bor);
+    background-color: var(--clr-ok);
+}
